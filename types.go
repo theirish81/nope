@@ -28,14 +28,17 @@ type PermissionUnion struct {
 	PermissionsExt
 }
 
-// Relation defines a directed edge in an entity graph, flowing from source to target.
-// OutboundType names the relation type (e.g., "works_for") flowing toward the target.
-// InboundType optionally names the reverse relation type (e.g., "employs") flowing back.
-// Each direction can specify default roles to be applied.
+// Relation defines an edge type in the authorization graph connecting identities.
+// It specifies the semantic meaning of relationships between entities and the roles
+// that can be assigned across those relationships.
+// Type is the semantic verb describing this relationship (e.g., "owns", "is_member", "employs").
+// Description provides human-readable documentation for this relation type.
+// DefaultRoles are automatically assigned to identities connected by this relation.
+// AllowedRoles enumerates all roles that may be assigned across this relation type,
+// acting as a whitelist that constrains which roles are valid for this relationship.
 type Relation struct {
-	OutboundType         string    `yaml:"outboundType"`
-	InboundType          *string   `yaml:"inboundType"`
-	Description          string    `yaml:"description"`
-	DefaultOutboundRoles []string  `yaml:"defaultOutboundRoles"`
-	DefaultInboundRoles  *[]string `yaml:"defaultInboundRoles"`
+	Type         string   `yaml:"type"`
+	Description  string   `yaml:"description"`
+	DefaultRoles []string `yaml:"defaultRoles"`
+	AllowedRoles []string `yaml:"allowedRoles"`
 }
