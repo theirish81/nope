@@ -1,4 +1,4 @@
-# Nope
+# Nope ( WORK IN PROGRESS!! )
 
 A lightweight role and permission management library for Go applications.
 

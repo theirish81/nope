@@ -28,11 +28,6 @@ func TestFromYAML(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "user:admin", nope.Roles["admin"].Permissions[0])
 	assert.Equal(t, "user:read", nope.Permissions[0].Key())
-	/*assert.Empty(t, nope.ResolvePermissions("foo"))
-
-	assert.True(t, nope.HasAtLeastOnePermission([]string{"user:read"}, "admin"))
-	assert.False(t, nope.HasAtLeastOnePermission([]string{"user:authenticate"}, "admin"))
-	*/
 }
 
 func TestNope_HasAtLeastOnePermission(t *testing.T) {
