@@ -12,7 +12,8 @@ permissions:
   - user:write
   - user:delete
   - user:impersonate
-  - user:admin:
+  - alias: user:admin
+    permissions:
       - user:read
       - user:write
       - user:delete
@@ -31,7 +32,8 @@ func TestFromYAML(t *testing.T) {
 }
 
 func TestNope_HasAtLeastOnePermission(t *testing.T) {
-	nope, _ := FromYAML([]byte(yx))
+	nope, err := FromYAML([]byte(yx))
+	assert.Nil(t, err)
 	assert.True(t, nope.HasAtLeastOnePermission([]string{"user:read"}, "admin"))
 	assert.True(t, nope.HasAtLeastOnePermission([]string{"user:read", "user:impersonate"}, "admin"))
 	assert.False(t, nope.HasAtLeastOnePermission([]string{"user:impersonate"}, "admin"))

@@ -1,12 +1,23 @@
 package nope
 
 import (
+	"encoding/json"
 	"fmt"
 	"slices"
 
 	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
 )
+
+// MarshalJSON implements custom JSON marshaling
+func (u *PermissionUnion) MarshalJSON() ([]byte, error) {
+	// If Simple has a value, marshal it as a string
+	if u.string != "" {
+		return json.Marshal(u.string)
+	}
+	// Otherwise, marshal Extended as an object
+	return json.Marshal(u.PermissionsExt)
+}
 
 // UnmarshalYAML implements custom YAML unmarshaling for PermissionUnion
 // It attempts to decode as a string first, then as a map if that fails
@@ -20,7 +31,7 @@ func (u *PermissionUnion) UnmarshalYAML(value *yaml.Node) error {
 	}
 
 	// Try to decode as an extended permissions map
-	var m PermissionsExt
+	var m *PermissionsExt
 	if value.Decode(&m) == nil {
 		u.PermissionsExt = m
 		return nil
@@ -31,12 +42,12 @@ func (u *PermissionUnion) UnmarshalYAML(value *yaml.Node) error {
 }
 
 func (u *PermissionUnion) IsComposite() bool {
-	return u.PermissionsExt != nil && len(u.PermissionsExt) > 0
+	return u.PermissionsExt != nil
 }
 
 func (u *PermissionUnion) Key() string {
 	if u.IsComposite() {
-		return lo.Keys(u.PermissionsExt)[0]
+		return u.PermissionsExt.Alias
 	}
 	return u.string
 }
@@ -63,8 +74,7 @@ func (a Nope) ResolvePermissions(roles ...string) []string {
 			}); found {
 				// If it's an extended permission, all sub-permissions
 				if p2.IsComposite() {
-					ks := lo.Keys(p2.PermissionsExt)
-					permissions = append(permissions, p2.PermissionsExt[ks[0]]...)
+					permissions = append(permissions, p2.PermissionsExt.Permissions...)
 				} else {
 					// Simple permission, add it directly
 					permissions = append(permissions, p)
