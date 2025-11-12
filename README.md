@@ -29,7 +29,8 @@ Create a YAML file or a data structure as the following example:
 permissions:
   - user:read
   - user:write
-  - user:admin:
+  - alias: user:admin
+    permissions:
       - user:read
       - user:write
       - user:delete
@@ -46,10 +47,10 @@ roles:
       - user:read
       - user:write
 
-  user:admin:
+  admin:
     description: Full system access
     permissions:
-      - admin
+      - user:admin
 ```
 
 ### Load and Use
@@ -144,13 +145,14 @@ permissions:
   - user:write
   - blog:read
   - blog:write
-  - user:admin:
+  - alias: user:admin
+    permissions:
       - user:read
       - user:write
       - user:delete
 ```
 
-When a role is granted the `admin` permission, it automatically receives all listed sub-permissions.
+When a role is granted the `user:admin` permission, it automatically receives all listed sub-permissions.
 
 ## Use Cases
 
